@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+
+  # web:
+  #   build: .
+  #   ports:
+  #     - "8000:80"
+  #   depends_on:
+  #     - db
+
+  db:
+    image: postgres:10-alpine
+    ports:
+      - 6013:5432
+    volumes:
+      - MttApiDbDev:/data/postgres
+    environment:
+      - POSTGRES_USER=MttDev
+      - POSTGRES_PASSWORD=MttDev
+      - POSTGRES_DB=MttDev
+      - PGDATA=/data/postgres
+  
+  adminer:
+    image: adminer
+    ports:
+      - 6012:8080
+    environment:
+      ADMINER_DESIGN: nette
+      ADMINER_PLUGINS: dump-json dump-date dump-zip edit-calendar edit-foreign enum-option enum-types
+
+volumes:
+  MttApiDbDev:
+    external: true

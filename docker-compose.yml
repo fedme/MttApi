@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+
+  web:
+    build: .
+    restart: always
+    expose:
+      - 80
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:YOUR_HOST_HERE" # TODO: Do not hardcode
+      - "traefik.docker.network=web-proxy"
+    networks:
+      - default
+      - web-proxy
+
+  db:
+    image: postgres:10-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=mtt
+      - POSTGRES_PASSWORD=YOUR_PASSWD HERE # TODO: Do not hardcode
+      - POSTGRES_DB=mtt
+      - PGDATA=/data/postgres
+    expose:
+      - 5432
+    volumes:
+      - /var/server-data/MttApi/data/postgres:/data/postgres # TODO: Do not hardcode
+    networks:
+      - default
+      - pg-admin
+
+networks:
+  default:
+    external: false
+  pg-admin:
+    external: true
+  web-proxy:
+    external: true
